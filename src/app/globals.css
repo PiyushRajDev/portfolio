@@ -43,3 +43,22 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #3f3f46;
 }
+
+/* Architecture diagram — flowing data animation */
+@keyframes arch-dash-flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+.arch-flow-dash {
+  animation: arch-dash-flow 1s linear infinite;
+}
+
+/* Hide scrollbar for diagram container but allow scrolling */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

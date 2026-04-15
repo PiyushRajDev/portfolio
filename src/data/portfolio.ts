@@ -74,12 +74,39 @@ export const portfolioData = {
         architectureVisuals: [
           {
             title: "Evaluation Pipeline",
-            description: "Stateless parsing of Github repositories dispatched to isolated background workers.",
+            subtitle: "End-to-end flow from repository ingestion to scored output",
+            nodes: [
+              { id: "client", col: 1, type: "client", label: "GitHub Repo URL", icon: "git", accent: "zinc", description: "User submits a public repository for evaluation" },
+              { id: "api", col: 2, type: "service", label: "REST API", icon: "server", accent: "blue", description: "Stateless Express server — validates, enqueues, returns job ID" },
+              { id: "queue", col: 3, type: "queue", label: "BullMQ", icon: "layers", accent: "amber", description: "Redis-backed job queue with retry policies and dead-letter handling" },
+              { id: "worker", col: 4, type: "worker", label: "AST Worker", icon: "cpu", accent: "emerald", description: "Isolated worker parses repo, extracts metrics via deterministic AST analysis" },
+              { id: "db", col: 5, type: "storage", label: "PostgreSQL", icon: "database", accent: "violet", description: "Persists evaluation results, user profiles, and JRI scores" },
+            ],
+            edges: [
+              { from: "client", to: "api", label: "POST /evaluate" },
+              { from: "api", to: "queue", label: "Enqueue job" },
+              { from: "queue", to: "worker", label: "Dequeue & process", animated: true },
+              { from: "worker", to: "db", label: "Write results" },
+            ],
           },
           {
             title: "Worker Queue System",
-            description: "Redis+BullMQ based reliable processing ensuring zero dropped evaluations.",
-          }
+            subtitle: "Reliable async processing with zero dropped evaluations",
+            nodes: [
+              { id: "producer", col: 1, type: "service", label: "API Server", icon: "server", accent: "blue", description: "Produces jobs on every evaluation request" },
+              { id: "redis", col: 2, type: "queue", label: "Redis", icon: "zap", accent: "red", description: "In-memory store backing BullMQ — handles pub/sub and job state" },
+              { id: "w1", col: 3, type: "worker", label: "Worker 1", icon: "cpu", accent: "emerald", description: "Horizontally scalable — processes evaluations concurrently" },
+              { id: "w2", col: 3, type: "worker", label: "Worker N", icon: "cpu", accent: "emerald", description: "Additional workers scale independently from API tier" },
+              { id: "dlq", col: 4, type: "storage", label: "Dead Letter Queue", icon: "alertTriangle", accent: "amber", description: "Failed jobs are captured for inspection — nothing silently drops" },
+            ],
+            edges: [
+              { from: "producer", to: "redis", label: "Add to queue" },
+              { from: "redis", to: "w1", label: "Dispatch", animated: true },
+              { from: "redis", to: "w2", label: "Dispatch", animated: true },
+              { from: "w1", to: "dlq", label: "On failure" },
+              { from: "w2", to: "dlq", label: "On failure" },
+            ],
+          },
         ],
         tradeOffs: [
           "Opted for BullMQ over Kafka for lower operational overhead while still maintaining strict queue processing reliability.",
@@ -121,8 +148,22 @@ export const portfolioData = {
         architectureVisuals: [
           {
             title: "Derived Data Architecture",
-            description: "Postgres as source of truth, replicating to Elasticsearch for full-text search.",
-          }
+            subtitle: "Event-driven replication from source of truth to optimized read stores",
+            nodes: [
+              { id: "api", col: 1, type: "service", label: "NestJS API", icon: "server", accent: "blue", description: "Modular monolith — handles product CRUD and search requests" },
+              { id: "cache", col: 2, type: "queue", label: "Redis Cache", icon: "zap", accent: "emerald", description: "Cache-aside layer for hot product data — reduces DB read pressure" },
+              { id: "pg", col: 2, type: "storage", label: "PostgreSQL", icon: "database", accent: "violet", description: "Single source of truth for all product and catalog data" },
+              { id: "stream", col: 3, type: "queue", label: "Redis Streams", icon: "radio", accent: "red", description: "Event bus publishing change events on every write operation" },
+              { id: "es", col: 4, type: "storage", label: "Elasticsearch", icon: "search", accent: "amber", description: "Derived search index — eventually consistent, optimized for full-text queries" },
+            ],
+            edges: [
+              { from: "api", to: "pg", label: "Write" },
+              { from: "pg", to: "stream", label: "Change event", animated: true },
+              { from: "stream", to: "es", label: "Index sync", animated: true },
+              { from: "api", to: "cache", label: "Cache-aside read" },
+              { from: "cache", to: "pg", label: "Cache miss → DB" },
+            ],
+          },
         ],
         tradeOffs: [
           "Accepted eventual consistency between primary DB and Search Index to drastically reduce synchronous write latency.",
@@ -154,8 +195,21 @@ export const portfolioData = {
         architectureVisuals: [
           {
             title: "Real-time Sync Loop",
-            description: "Separated WebSocket transport for coordinate state from WebRTC media transport.",
-          }
+            subtitle: "Dual transport — WebSocket for state, WebRTC for media",
+            nodes: [
+              { id: "client", col: 1, type: "client", label: "PIXI.js Client", icon: "monitor", accent: "zinc", description: "Renders 2D world, captures input, interpolates remote positions" },
+              { id: "ws", col: 2, type: "service", label: "WS State Server", icon: "radio", accent: "blue", description: "Broadcasts coordinate + action state at high frequency to all room participants" },
+              { id: "lk", col: 2, type: "service", label: "LiveKit SFU", icon: "video", accent: "emerald", description: "Selective forwarding unit — routes audio/video streams without mixing" },
+              { id: "db", col: 3, type: "storage", label: "PostgreSQL", icon: "database", accent: "violet", description: "Persists user profiles, room state, and session metadata" },
+            ],
+            edges: [
+              { from: "client", to: "ws", label: "Position updates", animated: true },
+              { from: "ws", to: "client", label: "Broadcast state", animated: true },
+              { from: "client", to: "lk", label: "Media tracks" },
+              { from: "lk", to: "client", label: "Forwarded streams" },
+              { from: "ws", to: "db", label: "Persist sessions" },
+            ],
+          },
         ],
         tradeOffs: [
           "Offloaded heavy media routing to LiveKit (SFU) instead of a custom WebRTC implementation to optimize client CPU.",

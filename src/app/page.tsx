@@ -3,19 +3,27 @@ import { portfolioData } from "@/data/portfolio"
 import { ArrowRight, Terminal, ArrowRightCircle, GitFork, Database, Server, Component } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
+import { NodeNetworkBackground } from "@/components/NodeNetworkBackground"
+import { TiltCard } from "@/components/3DTiltCard"
 
 export default function Home() {
   const primaryProject = portfolioData.projects.find((p) => p.isPrimary)
   const secondaryProjects = portfolioData.projects.filter((p) => !p.isPrimary)
 
   return (
-    <div className="flex flex-col gap-16 pb-20">
-      {/* 1. Hero / Currently Building */}
-      <section id="hero" className="scroll-mt-24 space-y-8">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h2 className="text-3xl font-medium tracking-tight text-zinc-100 sm:text-4xl text-pretty mb-6">
-            {portfolioData.personal.headline}
-          </h2>
+    <>
+      {/* Interactive Global Background */}
+      <div className="fixed inset-0 z-[-1]">
+        <NodeNetworkBackground />
+      </div>
+
+      <div className="flex flex-col gap-16 pb-20 relative z-10">
+        {/* 1. Hero / Currently Building */}
+        <section id="hero" className="scroll-mt-24 space-y-8 pt-4">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <h2 className="text-3xl font-medium tracking-tight text-zinc-100 sm:text-4xl text-pretty mb-6 min-h-[4rem]">
+              {portfolioData.personal.headline}
+            </h2>
           <div className="inline-flex items-center gap-3 rounded-full border border-zinc-800 bg-zinc-900/80 px-4 py-2 text-sm text-zinc-300 shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
             <span>Currently Building: </span>
@@ -65,63 +73,65 @@ export default function Home() {
         {/* Primary Project Card (Dominate) */}
         {primaryProject && (
           <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-            <Link href={`/projects/${primaryProject.id}`} className="group block relative p-[1.5px] rounded-2xl bg-gradient-to-r from-emerald-500/40 via-teal-500/40 to-emerald-600/40 hover:from-emerald-400 hover:via-teal-400 hover:to-emerald-500 transition-colors duration-500 shadow-xl">
-              <div className="relative flex flex-col gap-5 h-full bg-zinc-950 group-hover:bg-zinc-900/90 rounded-[15px] p-6 md:p-10 transition-colors">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-2xl font-bold text-zinc-100 group-hover:text-emerald-400 transition-colors">
-                      {primaryProject.title}
-                    </h4>
-                    <p className="text-sm font-medium text-emerald-400/90 mt-1 uppercase tracking-wider">{primaryProject.subtitle}</p>
+            <TiltCard>
+              <Link href={`/projects/${primaryProject.id}`} className="group block relative p-[1px] rounded-2xl bg-gradient-to-br from-emerald-500/30 via-zinc-800 to-teal-500/20 hover:from-emerald-400 hover:via-emerald-500/20 hover:to-teal-400 transition-colors duration-500 shadow-2xl">
+                <div className="relative flex flex-col gap-5 h-full bg-zinc-950/90 backdrop-blur-sm group-hover:bg-zinc-950/80 rounded-[15px] p-6 md:p-10 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-2xl font-bold text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                        {primaryProject.title}
+                      </h4>
+                      <p className="text-sm font-medium text-emerald-400/90 mt-1 uppercase tracking-wider">{primaryProject.subtitle}</p>
+                    </div>
+                    {/* Centered Arrow Container */}
+                    <div className="flex items-center justify-center shrink-0 w-10 h-10 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-zinc-950 transition-all">
+                      <ArrowRight className="group-hover:translate-x-0.5 transition-transform h-5 w-5" />
+                    </div>
                   </div>
-                  {/* Centered Arrow Container */}
-                  <div className="flex items-center justify-center shrink-0 w-10 h-10 bg-emerald-500/10 rounded-full border border-emerald-500/20 text-emerald-400">
-                    <ArrowRight className="group-hover:translate-x-0.5 transition-transform h-5 w-5" />
+                  
+                  <div className="bg-zinc-950/70 border border-zinc-800/80 p-4 rounded-lg backdrop-blur-sm shadow-inner hidden md:block">
+                     <p className="text-zinc-200 font-semibold leading-relaxed">
+                       &ldquo;{primaryProject.impactLine}&rdquo;
+                     </p>
                   </div>
-                </div>
-                
-                <div className="bg-zinc-950/50 border border-zinc-800/80 p-4 rounded-lg">
-                   <p className="text-zinc-200 font-semibold leading-relaxed">
-                     &ldquo;{primaryProject.impactLine}&rdquo;
-                   </p>
-                </div>
 
-                <p className="text-zinc-400 leading-relaxed text-sm">
-                  {primaryProject.shortDescription}
-                </p>
-                
-                <div className="flex items-center justify-between mt-2">
-                  <ul className="flex flex-wrap gap-2">
-                    {primaryProject.tech.slice(0, 5).map((t) => (
-                      <li key={t} className="text-xs text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-md border border-emerald-500/20">
-                        {t}
-                      </li>
-                    ))}
-                    {primaryProject.tech.length > 5 && (
-                      <li className="text-xs text-zinc-500 px-2 py-1">+{primaryProject.tech.length - 5}</li>
-                    )}
-                  </ul>
-                  <span className="opacity-0 lg:group-hover:opacity-100 transition-opacity text-xs font-semibold text-emerald-400 flex items-center gap-1">
-                     See system design <ArrowRight className="h-3 w-3" />
-                  </span>
+                  <p className="text-zinc-400 leading-relaxed text-sm">
+                    {primaryProject.shortDescription}
+                  </p>
+                  
+                  <div className="flex items-center justify-between mt-2">
+                    <ul className="flex flex-wrap gap-2">
+                      {primaryProject.tech.slice(0, 5).map((t) => (
+                        <li key={t} className="text-xs text-emerald-400/80 bg-emerald-400/5 px-2.5 py-1 rounded-md border border-emerald-500/10 backdrop-blur-md">
+                          {t}
+                        </li>
+                      ))}
+                      {primaryProject.tech.length > 5 && (
+                        <li className="text-xs text-zinc-500 px-2 py-1">+{primaryProject.tech.length - 5}</li>
+                      )}
+                    </ul>
+                    <span className="opacity-0 lg:group-hover:opacity-100 transition-opacity text-xs font-semibold text-emerald-400 flex items-center gap-1 mt-4 md:mt-0">
+                       See system design <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </TiltCard>
           </motion.div>
         )}
 
         {/* Secondary Projects List */}
-        <div className="grid grid-cols-1 gap-px bg-zinc-800/50 rounded-2xl overflow-hidden border border-zinc-800">
+        <div className="grid grid-cols-1 gap-px bg-zinc-800/50 rounded-2xl overflow-hidden border border-zinc-800/50 backdrop-blur-sm shadow-xl">
           {secondaryProjects.map((project, idx) => (
              <motion.div key={project.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 * (idx+1) }}>
-               <Link href={`/projects/${project.id}`} className="group flex flex-col p-6 bg-zinc-950 hover:bg-zinc-900 transition-all gap-4">
+               <Link href={`/projects/${project.id}`} className="group flex flex-col p-6 bg-zinc-950/80 hover:bg-zinc-900/90 transition-all gap-4">
                  <div className="flex justify-between items-start gap-4">
                    <div className="space-y-1.5">
                      <h4 className="text-lg font-bold text-zinc-200 group-hover:text-emerald-400 transition-colors flex items-center gap-2">
                        {project.title}
                      </h4>
                      {/* Impact Line */}
-                     <p className="text-sm text-zinc-300 font-medium">
+                     <p className="text-sm text-zinc-300 font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                        {project.impactLine}
                      </p>
                      <p className="text-sm text-zinc-500 line-clamp-1">{project.shortDescription}</p>
@@ -132,10 +142,10 @@ export default function Home() {
                  <div className="flex items-center justify-between">
                    <div className="flex gap-2 shrink-0">
                       {project.tech.slice(0,4).map(t => (
-                        <span key={t} className="text-[10px] uppercase tracking-wider font-semibold text-zinc-400 border border-zinc-800 px-2 py-1 rounded-md">{t}</span>
+                        <span key={t} className="text-[10px] uppercase tracking-wider font-semibold text-zinc-400 border border-zinc-800/80 px-2 py-1 rounded-md">{t}</span>
                       ))}
                    </div>
-                   <span className="text-xs font-semibold text-zinc-500 group-hover:text-emerald-400 transition-colors flex items-center gap-1">
+                   <span className="text-xs font-semibold text-zinc-500 group-hover:text-emerald-400 transition-colors flex flex-row items-center gap-1">
                       View details <ArrowRight className="h-3 w-3" />
                    </span>
                  </div>
@@ -205,7 +215,7 @@ export default function Home() {
            </a>
          </div>
       </section>
-
     </div>
+    </>
   )
 }
