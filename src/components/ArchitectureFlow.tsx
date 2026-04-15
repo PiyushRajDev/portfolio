@@ -2,9 +2,6 @@
 import { ArrowDown, ArrowRight, Database, Server, Settings, Zap } from "lucide-react"
 
 export const ArchitectureFlow = ({ visuals }: { visuals: any[] }) => {
-  // A simple structured layout simulating a system architecture
-  // For standard visuals, we'll map them to nice Tailwind blocks.
-  
   if (!visuals || visuals.length === 0) return null;
 
   return (
@@ -15,13 +12,12 @@ export const ArchitectureFlow = ({ visuals }: { visuals: any[] }) => {
                {vis.title}
             </h4>
             
-            {/* Diagram UI - simplified generic block architecture */}
             <div className="flex flex-col md:flex-row items-center gap-4 w-full justify-center">
                
                {/* Incoming / Client Box */}
                <div className="flex w-full md:w-1/3 flex-col items-center p-5 rounded-lg border border-zinc-700 bg-zinc-800/40 shadow-lg">
-                  <div className="p-2 bg-zinc-700/50 rounded-md mb-3">
-                     <Zap className="h-5 w-5 text-emerald-400" />
+                  <div className="p-2 bg-zinc-700/50 rounded-md mb-3 border border-zinc-600/50">
+                     <Zap className="h-5 w-5 text-zinc-300" />
                   </div>
                   <span className="text-sm font-semibold text-zinc-200">Event / Request</span>
                </div>
@@ -33,11 +29,11 @@ export const ArchitectureFlow = ({ visuals }: { visuals: any[] }) => {
                </div>
 
                {/* Process Box */}
-               <div className="flex w-full md:w-1/3 flex-col items-center p-5 rounded-lg border border-emerald-500/30 bg-emerald-950/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
-                  <div className="p-2 bg-emerald-900/40 rounded-md mb-3 border border-emerald-500/20">
-                     <Server className="h-5 w-5 text-emerald-400" />
+               <div className="flex w-full md:w-1/3 flex-col items-center p-5 rounded-lg border border-zinc-600/50 bg-zinc-800/80 shadow-[0_0_15px_rgba(255,255,255,0.02)]">
+                  <div className="p-2 bg-zinc-700 rounded-md mb-3 border border-zinc-500/50">
+                     <Server className="h-5 w-5 text-zinc-100" />
                   </div>
-                  <span className="text-sm font-semibold text-emerald-100 text-center">{vis.description}</span>
+                  <span className="text-sm font-semibold text-zinc-100 text-center">{vis.description}</span>
                </div>
 
                {/* Connector */}
@@ -48,8 +44,8 @@ export const ArchitectureFlow = ({ visuals }: { visuals: any[] }) => {
 
                {/* Storage / Sink Box */}
                <div className="flex w-full md:w-1/3 flex-col items-center p-5 rounded-lg border border-zinc-700 bg-zinc-800/40 shadow-lg">
-                  <div className="p-2 bg-zinc-700/50 rounded-md mb-3">
-                     <Database className="h-5 w-5 text-blue-400" />
+                  <div className="p-2 bg-zinc-700/50 rounded-md mb-3 border border-zinc-600/50">
+                     <Database className="h-5 w-5 text-zinc-300" />
                   </div>
                   <span className="text-sm font-semibold text-zinc-200">State / Persistence</span>
                </div>
